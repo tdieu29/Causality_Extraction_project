@@ -2,6 +2,7 @@
 fastapi
 uvicorn[standard]
 flair
+h5py==2.10
 wandb
 tensorflow==1.15
 keras==2.2.4
