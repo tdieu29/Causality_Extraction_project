@@ -45,26 +45,28 @@ config_dict = Namespace(
     batch_size = 16
 )
 
+fp1 = str(Path(predict_path, 'unk_words_dict.pkl'))
+unk_words_dict = pickle.load(open(fp1, 'rb'))
 #run = wandb.init(project = 'predict', config = config_dict)
 #config = wandb.config
 
 class Data:
     def __init__(self):
-        fp1 = str(Path(index_path, 'index_w.pkl'))
-        self.word2index, self.index2word = pickle.load(open(fp1, 'rb'))
+        fp2 = str(Path(index_path, 'index_w.pkl'))
+        self.word2index, self.index2word = pickle.load(open(fp2, 'rb'))
 
-        fp2 = str(Path(embedding_path, 'extvec_embedding.npy'))
-        self.embedding = np.load(open(fp2, 'rb'))
+        fp3 = str(Path(embedding_path, 'extvec_embedding.npy'))
+        self.embedding = np.load(open(fp3, 'rb'))
       
         self.VOCAB_SIZE = len(self.word2index) 
 
-        fp3 = str(Path(predict_path, 'input.h5'))
-        with h5py.File(fp3, 'r') as fh:
+        fp4 = str(Path(predict_path, 'input.h5'))
+        with h5py.File(fp4, 'r') as fh:
             self.inputWordArray = fh['inputWordArray'][:]
             self.inputCharArray = fh['inputCharArray'][:]
 
-        fp4 = str(Path(embedding_path, 'input_flair.h5'))
-        with h5py.File(fp4, 'r') as f:
+        fp5 = str(Path(embedding_path, 'input_flair.h5'))
+        with h5py.File(fp5, 'r') as f:
             self.input_flair = f['input_flair'][:]
 
 
@@ -103,15 +105,41 @@ def predict(config = config_dict):
                                      ' '.join([data.index2word[w] for w in data.inputWordArray[i] if w != 0]))
         
         if p_idx != 0:
-            y_pred_Cause = [[data.index2word[data.inputWordArray[i][idx]] 
-                            for idx in n[0] if data.inputWordArray[i][idx] != 0 ]
-                            for n in p_idx]
 
-            y_pred_Effect = [[data.index2word[data.inputWordArray[i][idx]] 
-                            for idx in n[-1] if data.inputWordArray[i][idx] != 0]
-                            for n in p_idx]
+            y_pred_Cause = []
+            for n in p_idx:
+                cause = []
+                for idx in n[0]:
+                    temp = data.inputWordArray[i][idx]
+                    if temp != 0:
+                        if temp == 1:
+                            if idx in unk_words_dict['Index_{}'.format(i)]:
+                                index = unk_words_dict['Index_{}'.format(i)].index(idx)
+                                word = unk_words_dict['Words_{}'.format(i)][index]
+                                cause.append(word)
+                        else:
+                            word = data.index2word[temp]
+                            cause.append(word)
+                y_pred_Cause.append(cause)
 
-            decoded_predictions['Predictions'].append([(y_pred_Cause[i], y_pred_Effect[i]) for i in range(len(y_pred_Cause))])
+            y_pred_Effect = []
+            for n in p_idx:
+                effect = []
+                for idx in n[-1]:
+                    temp = data.inputWordArray[i][idx]
+                    if temp != 0:
+                        if temp == 1:
+                            if idx in unk_words_dict['Index_{}'.format(i)]:
+                                index = unk_words_dict['Index_{}'.format(i)].index(idx)
+                                word = unk_words_dict['Words_{}'.format(i)][index]
+                                effect.append(word)
+                        else:
+                            word = data.index2word[temp]
+                            effect.append(word)
+                y_pred_Effect.append(effect)
+
+            decoded_predictions['Predictions'].append(
+                                [(y_pred_Cause[i], y_pred_Effect[i]) for i in range(len(y_pred_Cause))])
         else:
             decoded_predictions['Predictions'].append([])
         

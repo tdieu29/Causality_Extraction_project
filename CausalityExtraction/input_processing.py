@@ -87,13 +87,34 @@ def get_input(sentenceList):
     inputSentences = []
     inputSentences.extend(sentenceList)
 
-    # Segment words and characters, add padding to arrays of words and characters 
+    # Segment words and characters
     inputWords = [wordSeg(i) for i in inputSentences]
     inputChars = [[list(w) for w in s] for s in inputWords]
 
+    # Add padding to character array  
     inputCharArray = char_data(inputChars)
 
-    inputWordSeq =  [[word2index.get(w, 1) for w in s] for s in inputWords]
+    # Add padding to word array
+    unk_words_dict = dict()
+    inputWordSeq = []
+    s_idx = 0
+    for s in inputWords:
+        unk_words_dict['Words_{}'.format(s_idx)] = []
+        unk_words_dict['Index_{}'.format(s_idx)] = []
+
+        w_idx = 0
+        inputWordSeq_temp = []
+        for w in s:
+            index = word2index.get(w, None)
+            if index == None:
+                index = 1
+                unk_dict['Words_{}'.format(s_idx)].append(w)
+                unk_dict['Index_{}'.format(s_idx)].append(w_idx)
+            inputWordSeq_temp.append(index)
+            w_idx += 1
+        inputWordSeq.append(inputWordSeq_temp)
+        s_idx += 1
+
     inputWordArray = pad_sequences(inputWordSeq, maxlen=MAX_WLEN, padding='post', truncating='post')
 
     # Get flair embedding for input sentences
@@ -110,4 +131,9 @@ def get_input(sentenceList):
     h5f = h5py.File(fp4, 'w')
     h5f.create_dataset('input_flair', data = input_flair)
     h5f.close()
+
+    # Save unk_words_dict
+    fp5 = str(Path(configurations.PREDICT_DIR, 'unk_words_dict.pkl'))
+    with open(fp5, 'wb') as fp:
+        pickle.dump(unk_words_dict, fp, -1)
 
