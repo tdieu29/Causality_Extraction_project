@@ -15,10 +15,10 @@ texts = [
         'text': 'In 2004, Elon Musk and Jeff Bezos met for a meal to discuss space.'
     },
     {
-        'text': 'It was one of their few in-person interactions.'
+        'text': "This year's Nobel Laureates in Physiology or Medicine made the remarkable and unexpected discovery that inflammation in the stomach as well as ulceration of the stomach or duodenum is the result of an infection of the stomach caused by the bacterium Helicobacter pylori."
     },
     {
-        'text': "The conversation they had perfectly captures the different approaches they've taken to space exploration."
+        'text': 'The runtime disconnected due to inactivity.'
     },
     {
         'text': 'Deadlines might cause stress.'
@@ -27,7 +27,7 @@ texts = [
         'text': "Bezos' space company Blue Origins was officially incorporated in Sept 2000."
     },
     {
-        'text': "The path to success isn't straight."
+        'text': "The damages caused by mudslides, tremors, subsidence, superficial or underground water were verified, as well as swelling clay soils."
     },
     {
         'text': 'Arguments lead to their friendship fallout.'
@@ -52,11 +52,10 @@ texts = [
     }
 ]
 
-
 texts = [item['text'] for item in texts]
 
 input_processing.get_input(texts)
 
 decoded_predictions = predict.predict()
 
-print(decoded_predictions)
+print(decoded_predictions['Predictions'])

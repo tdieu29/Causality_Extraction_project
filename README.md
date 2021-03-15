@@ -1,4 +1,4 @@
-# CausalityExtraction
+# Causality Extraction
 
 To set up a virtual environment, activate it and install the required packages for this app, follow the steps below: 
 
