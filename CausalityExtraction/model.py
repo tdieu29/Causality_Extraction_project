@@ -18,14 +18,15 @@ from tag2triplet import *
 
 from CausalityExtraction import configurations
 
-#import wandb
-#from wandb.keras import WandbCallback
+import wandb
+from wandb.keras import WandbCallback
 
 
 # Constants and arguments
-file_path = configurations.DATA_DIR
 index_path = configurations.INDEX_DIR
 embedding_path = configurations.EMBEDDING_DIR
+train_path = configurations.TRAIN_DIR
+test_path = configurations.TEST_DIR
 save_path = configurations.LOGS_DIR
 
 MAX_WLEN = 58
@@ -121,11 +122,11 @@ class Data:
     
         self.VOCAB_SIZE = len(self.word2index)
 
-        with h5py.File(str(Path(file_path, 'train/train.h5')), 'r') as fh:
+        with h5py.File(str(Path(train_path, 'train.h5')), 'r') as fh:
             self.xTrain = fh['xTrain'][:]
             self.yTrain = fh['yTrain'][:]
     
-        with h5py.File(str(Path(file_path, 'test/test.h5')), 'r') as fh:
+        with h5py.File(str(Path(test_path, 'test.h5')), 'r') as fh:
             self.xTest = fh['xTest'][:]
             self.yTest = fh['yTest'][:]
     
@@ -136,11 +137,11 @@ class Data:
         Return the data from cross validation
         """
         # Flair embedding
-        h5f = h5py.File(str(Path(file_path, 'embedding/flair.h5')), 'r')
+        h5f = h5py.File(str(Path(embedding_path, 'flair.h5')), 'r')
         train_flair = h5f['xTrain_flair']
 
         # Char embedding   
-        h5f_te = h5py.File(str(Path(file_path, 'train/train.h5')), 'r')
+        h5f_te = h5py.File(str(Path(train_path, 'train.h5')), 'r')
         train_char = h5f_te['xTrain_c']
 
         # valIdx and trainIdx
@@ -183,15 +184,15 @@ class Data:
         Return the data of train
         """
         # Flair embedding
-        h5f = h5py.File(str(Path(file_path, 'embedding/flair.h5')), 'r')
+        h5f = h5py.File(str(Path(embedding_path, 'flair.h5')), 'r')
         train_flair = h5f['xTrain_flair']
         test_flair = h5f['xTest_flair']
 
         # Char embedding
-        h5f_train = h5py.File(str(Path(file_path, 'train/train.h5')), 'r')
+        h5f_train = h5py.File(str(Path(train_path, 'train.h5')), 'r')
         train_char = h5f_train['xTrain_c']
 
-        h5f_test = h5py.File(str(Path(file_path, 'test/test.h5')), 'r')
+        h5f_test = h5py.File(str(Path(test_path, 'test.h5')), 'r')
         test_char = h5f_test['xTest_c']
 
         # eval_x, eval_y
@@ -275,10 +276,10 @@ class Evaluate(tf.keras.callbacks.Callback):
             self.best_f1 = f1
 
         # Log metrics using wandb.log
-        #wandb.log({'precision': pre,
-        #            'recall': rec, 
-        #            'f1': f1,
-        #            'best_f1': self.best_f1})
+        wandb.log({'precision': pre,
+                    'recall': rec, 
+                    'f1': f1,
+                    'best_f1': self.best_f1})
 
         print(' - val_precision: %.4f - val_recall: %.4f - val_f1_score: %.4f - best_f1_score: %.4f' %
             (pre, rec, f1, self.best_f1))
@@ -287,32 +288,32 @@ class Evaluate(tf.keras.callbacks.Callback):
 class CausalityExtractor:
     def __init__(self, config):
         self.config = config
-        #self.reproducibility()
+        self.reproducibility()
         self.kernel_initializer = keras.initializers.glorot_uniform(seed=config.seed)
         self.recurrent_initializer = keras.initializers.Orthogonal(seed=config.seed)
         self.lr = config.learning_rate
         self.save_path = save_path
     
-    #def reproducibility(self):
-    #    """
-    #    Ensure that the model can obtain reproducible results
-    #    """
-    #    os.environ['PYTHONHASHSEED'] = str(self.config.seed)
-    #    os.environ['CUDA_VISIBLE_DEVICES'] = str(self.config.cuda_devices)
-    #    np.random.seed(self.config.seed)
-    #    rn.seed(self.config.seed)
-    #    session_conf =  tf.compat.v1.ConfigProto(                    
-    #                                device_count = {'CPU': self.config.cpu_core},
-    #                                intra_op_parallelism_threads = self.config.cpu_core,
-    #                                inter_op_parallelism_threads = self.config.cpu_core,
-    #                                gpu_options =  tf.compat.v1.GPUOptions(allow_growth=True  
-    #                                      #per_process_gpu_memory_fraction=0.09
-    #                                                            ),
-    #                                allow_soft_placement=True)
-    #
-    #    tf.compat.v1.set_random_seed(self.config.seed) # tf.random.set_seed(config.seed) 
-    #    sess =  tf.compat.v1.Session(graph= tf.compat.v1.get_default_graph(), config=session_conf)
-    #    K.set_session(sess)
+    def reproducibility(self):
+        """
+        Ensure that the model can obtain reproducible results
+        """
+        os.environ['PYTHONHASHSEED'] = str(self.config.seed)
+        os.environ['CUDA_VISIBLE_DEVICES'] = str(self.config.cuda_devices)
+        np.random.seed(self.config.seed)
+        rn.seed(self.config.seed)
+        session_conf =  tf.compat.v1.ConfigProto(                    
+                                    device_count = {'CPU': self.config.cpu_core},
+                                    intra_op_parallelism_threads = self.config.cpu_core,
+                                    inter_op_parallelism_threads = self.config.cpu_core,
+                                    gpu_options =  tf.compat.v1.GPUOptions(allow_growth=True  
+                                          #per_process_gpu_memory_fraction=0.09
+                                                                ),
+                                    allow_soft_placement=True)
+    
+        tf.compat.v1.set_random_seed(self.config.seed) # tf.random.set_seed(config.seed) 
+        sess =  tf.compat.v1.Session(graph= tf.compat.v1.get_default_graph(), config=session_conf)
+        K.set_session(sess)
 
     def slm(self, data):
         """
@@ -401,7 +402,7 @@ class CausalityExtractor:
         ap = sum([len(i) for i in y_true_idx if i != 0])
     
         # Callbacks
-        #wb = WandbCallback()
+        wb = WandbCallback()
 
         evaluator = Evaluate(data_cv, eval_x, predict_generator, y_true_idx, ap)
                          
@@ -413,11 +414,11 @@ class CausalityExtractor:
         model.fit_generator(training_generator, epochs = self.config.num_epochs, 
                             verbose = 1,
                             validation_data = validation_generator,
-                            callbacks=[evaluator, reduce_lr, es],
+                            callbacks=[wb, evaluator, reduce_lr, es],
                             shuffle=False)
     
         # Log metrics using wandb.log
-        #wandb.log({'k_fold': self.config.k_fold})
+        wandb.log({'k_fold': self.config.k_fold})
     
     def train(self, data_train):
         """Train"""
@@ -433,7 +434,7 @@ class CausalityExtractor:
         ap = sum([len(i) for i in y_true_idx if i != 0])
     
         # Callbacks
-        #wb = WandbCallback()
+        wb = WandbCallback()
 
         evaluator = Evaluate(data_train, eval_x, predict_generator, y_true_idx, ap)
 
@@ -449,5 +450,5 @@ class CausalityExtractor:
         # Fit model
         model.fit_generator(training_generator, epochs = self.config.num_epochs, 
                             verbose=1, validation_data=validation_generator, 
-                            callbacks=[evaluator, reduce_lr, es, mc],
+                            callbacks=[wb, evaluator, reduce_lr, es, mc],
                             shuffle=False)
