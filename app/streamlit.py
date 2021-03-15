@@ -35,17 +35,17 @@ if st.button('Get results'):
     st.success('Done!')
 
     result = {'Sentence': [],
-                'Cause-Effect pairs': [], }
+                'Cause - Effect pairs': [], }
 
     for i in range(16):
         prediction = decoded_predictions['Predictions'][i]
         if len(prediction) != 0:
             for m in range(len(prediction)):
                 result['Sentence'].append(i+1)
-                result['Cause-Effect pairs'].append(prediction[m])
+                result['Cause - Effect pairs'].append(prediction[m])
         else:
             result['Sentence'].append(i+1)
-            result['Cause-Effect pairs'].append('None')
+            result['Cause - Effect pairs'].append('None')
 
     
     df = pd.DataFrame(data=result)

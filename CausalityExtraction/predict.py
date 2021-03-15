@@ -122,10 +122,6 @@ def predict(config = config_dict):
                             cause.append(word)
                 y_pred_Cause.append(cause)
 
-            #y_pred_Cause = [[data.index2word[data.inputWordArray[i][idx]] 
-            #                for idx in n[0] if data.inputWordArray[i][idx] != 0 ]
-            #                for n in p_idx]
-
             y_pred_Effect = []
             for n in p_idx:
                 effect = []
@@ -141,11 +137,6 @@ def predict(config = config_dict):
                             word = data.index2word[temp]
                             effect.append(word)
                 y_pred_Effect.append(effect)
-
-
-            #y_pred_Effect = [[data.index2word[data.inputWordArray[i][idx]] 
-            #                for idx in n[-1] if data.inputWordArray[i][idx] != 0]
-            #                for n in p_idx]
 
             decoded_predictions['Predictions'].append(
                                 [(y_pred_Cause[i], y_pred_Effect[i]) for i in range(len(y_pred_Cause))])
