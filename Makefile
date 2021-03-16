@@ -8,7 +8,7 @@ help:
 
 .PHONY: install 
 install: 
-	python -m pip install -e
+	python -m pip install -e .
 
 
 .PHONY: install-dev

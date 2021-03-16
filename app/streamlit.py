@@ -3,8 +3,10 @@ import streamlit as st
 import re  
 import pandas as pd 
 
+# Title of webpage
 st.title('Causality Extraction from texts')
 
+# Input box on webpage
 text = st.text_area(
 label='The box below contains 16 example sentences. Please replace them with your own sentences and enter up to 16 sentences. \
 If you did not enter as many as 16 sentences, please leave the remaining example sentences in the box.', 
@@ -20,7 +22,8 @@ were verified, as well as swelling clay soils. \n10. Arguments lead to their fri
 winds, trees fell on homes. \n15. I arrived late because of the traffic jam. \n16. Traffic is a function of flow, density of the vehicles \
 and the speed of the vehicles.", 
 height=430)
-            
+
+# When user clicks on the 'Get results' button:
 sentences = []
 
 if st.button('Get results'):
