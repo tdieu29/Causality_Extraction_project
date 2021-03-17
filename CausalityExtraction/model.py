@@ -11,7 +11,7 @@ import math
 from keras.models import Model
 from keras import optimizers
 from keras.callbacks import *
-import urllib.request
+#import urllib.request
 
 from MHSA import MultiHeadSelfAttention
 from ChainCRF import ChainCRF
@@ -115,18 +115,18 @@ class DataGenerator(keras.utils.Sequence):
 
 class Data:
     def __init__(self, config):
-        #fp1 = str(Path(index_path, 'index_w.pkl'))
-        #self.word2index, self.index2word = pickle.load(open(fp1, 'rb'))
+        fp1 = str(Path(index_path, 'index_w.pkl'))
+        self.word2index, self.index2word = pickle.load(open(fp1, 'rb'))
         
-        fp1 = 'https://drive.google.com/uc?export=download&id=1RnQ8vutbAPpsPqpgsZ6ktGJCRI_5K_E5'
-        urllib.request.urlretrieve(fp1, 'index_w.pkl')
-        self.word2index, self.index2word = pickle.load(open('index_w.pkl', 'rb'))
+        #fp1 = 'https://drive.google.com/uc?export=download&id=1RnQ8vutbAPpsPqpgsZ6ktGJCRI_5K_E5'
+        #urllib.request.urlretrieve(fp1, 'index_w.pkl')
+        #self.word2index, self.index2word = pickle.load(open('index_w.pkl', 'rb'))
 
-        #fp2 = str(Path(embedding_path, 'extvec_embedding.npy'))
-        #self.embedding = np.load(open(fp2, 'rb'))
-        fp2 = 'https://drive.google.com/uc?export=download&id=1OuBgaMrTrl1NZY0qvjEx4DkxDdO5SvLI'
-        urllib.request.urlretrieve(fp2, 'extvec_embedding.npy')
-        self.embedding = np.load(open('extvec_embedding.npy', 'rb'))
+        fp2 = str(Path(embedding_path, 'extvec_embedding.npy'))
+        self.embedding = np.load(open(fp2, 'rb'))
+        #fp2 = 'https://drive.google.com/uc?export=download&id=1OuBgaMrTrl1NZY0qvjEx4DkxDdO5SvLI'
+        #urllib.request.urlretrieve(fp2, 'extvec_embedding.npy')
+        #self.embedding = np.load(open('extvec_embedding.npy', 'rb'))
     
         self.VOCAB_SIZE = len(self.word2index)
 
