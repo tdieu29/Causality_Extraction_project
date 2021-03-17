@@ -6,6 +6,7 @@ import h5py
 #import wandb
 import argparse
 from argparse import Namespace
+import urllib.request
 
 from CausalityExtraction import configurations, model
 from CausalityExtraction.model import MaskConv1D, DataGenerator, CausalityExtractor
@@ -52,11 +53,18 @@ unk_words_dict = pickle.load(open(fp1, 'rb'))
 
 class Data:
     def __init__(self):
-        fp2 = str(Path(index_path, 'index_w.pkl'))
-        self.word2index, self.index2word = pickle.load(open(fp2, 'rb'))
+        #fp2 = str(Path(index_path, 'index_w.pkl'))
+        #self.word2index, self.index2word = pickle.load(open(fp2, 'rb'))
 
-        fp3 = str(Path(embedding_path, 'extvec_embedding.npy'))
-        self.embedding = np.load(open(fp3, 'rb'))
+        fp2 = 'https://drive.google.com/uc?export=download&id=1RnQ8vutbAPpsPqpgsZ6ktGJCRI_5K_E5'
+        urllib.request.urlretrieve(fp2, 'index_w.pkl')
+        self.word2index, self.index2word = pickle.load(open('index_w.pkl', 'rb'))
+
+        #fp3 = str(Path(embedding_path, 'extvec_embedding.npy'))
+        #self.embedding = np.load(open(fp3, 'rb'))
+        fp3 = 'https://drive.google.com/uc?export=download&id=1OuBgaMrTrl1NZY0qvjEx4DkxDdO5SvLI'
+        urllib.request.urlretrieve(fp3, 'extvec_embedding.npy')
+        self.embedding = np.load(open('extvec_embedding.npy', 'rb'))
       
         self.VOCAB_SIZE = len(self.word2index) 
 
@@ -78,7 +86,10 @@ def predict(config = config_dict):
     extractor = CausalityExtractor(config_dict)
     model = extractor.slm(data)
 
-    model.load_weights(Path(save_path, 'best_model.h5'))
+    #model.load_weights(Path(save_path, 'best_model.h5'))
+    MODEL_URL = 'https://drive.google.com/uc?export=download&id=1WvrbNim4ciFpR2OyZ9nrM5WNl42RrGXS'
+    urllib.request.urlretrieve(MODEL_URL, 'best_model.h5')
+    model.load_weights('best_model.h5')
 
     test_generator = DataGenerator([i for i in range(len(data.inputWordArray))],
                                     x = data.inputWordArray,
