@@ -22,8 +22,16 @@ FLAIR_DIM = 4096
 fp1 = str(Path(configurations.INDEX_DIR, 'index_w.pkl'))
 word2index, index2word = pickle.load(open(fp1, 'rb'))
 
+#fp1 = 'https://drive.google.com/uc?export=download&id=1RnQ8vutbAPpsPqpgsZ6ktGJCRI_5K_E5'
+#urllib.request.urlretrieve(fp1, 'index_w.pkl')
+#word2index, index2word = pickle.load(open('index_w.pkl', 'rb'))
+
 fp2 = str(Path(configurations.INDEX_DIR, 'index_c.pkl'))
 char2index, index2char = pickle.load(open(fp2, 'rb'))
+
+#fp2 = 'https://drive.google.com/uc?export=download&id=1AP7VYaucrSRy6jIkoBqCnOrBhUR4mNL3'
+#urllib.request.urlretrieve(fp2, 'index_c.pkl')
+#char2index, index2char = pickle.load(open('index_c.pkl', 'rb'))
 
 def sep_pm(ws, pm):
     """
@@ -108,8 +116,8 @@ def get_input(sentenceList):
             index = word2index.get(w, None)
             if index == None:
                 index = 1
-                unk_dict['Words_{}'.format(s_idx)].append(w)
-                unk_dict['Index_{}'.format(s_idx)].append(w_idx)
+                unk_words_dict['Words_{}'.format(s_idx)].append(w)
+                unk_words_dict['Index_{}'.format(s_idx)].append(w_idx)
             inputWordSeq_temp.append(index)
             w_idx += 1
         inputWordSeq.append(inputWordSeq_temp)
