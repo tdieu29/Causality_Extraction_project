@@ -6,12 +6,10 @@ import h5py
 #import wandb
 import argparse
 from argparse import Namespace
-#import urllib.request
 
 from CausalityExtraction import configurations, model
 from CausalityExtraction.model import MaskConv1D, DataGenerator, CausalityExtractor
 from tag2triplet import *
-
 
 #wandb.login()
 
@@ -48,6 +46,7 @@ config_dict = Namespace(
 
 fp1 = str(Path(predict_path, 'unk_words_dict.pkl'))
 unk_words_dict = pickle.load(open(fp1, 'rb'))
+
 #run = wandb.init(project = 'predict', config = config_dict)
 #config = wandb.config
 
@@ -56,16 +55,9 @@ class Data:
         fp2 = str(Path(index_path, 'index_w.pkl'))
         self.word2index, self.index2word = pickle.load(open(fp2, 'rb'))
 
-        #fp2 = 'https://drive.google.com/uc?export=download&id=1RnQ8vutbAPpsPqpgsZ6ktGJCRI_5K_E5'
-        #urllib.request.urlretrieve(fp2, 'index_w.pkl')
-        #self.word2index, self.index2word = pickle.load(open('index_w.pkl', 'rb'))
-
         fp3 = str(Path(embedding_path, 'extvec_embedding.npy'))
         self.embedding = np.load(open(fp3, 'rb'))
-        #fp3 = 'https://drive.google.com/uc?export=download&id=1OuBgaMrTrl1NZY0qvjEx4DkxDdO5SvLI'
-        #urllib.request.urlretrieve(fp3, 'extvec_embedding.npy')
-        #self.embedding = np.load(open('extvec_embedding.npy', 'rb'))
-      
+        
         self.VOCAB_SIZE = len(self.word2index) 
 
         fp4 = str(Path(predict_path, 'input.h5'))
@@ -80,17 +72,12 @@ class Data:
 
 def predict(config = config_dict):
     
-    os.environ['CUDA_VISIBLE_DEVICES'] = "0"
-
     data = Data()
-    extractor = CausalityExtractor(config_dict)
+    extractor = CausalityExtractor(config)
     model = extractor.slm(data)
 
     model.load_weights(Path(save_path, 'best_model.h5'))
-    #MODEL_URL = 'https://drive.google.com/uc?export=download&id=1WvrbNim4ciFpR2OyZ9nrM5WNl42RrGXS'
-    #urllib.request.urlretrieve(MODEL_URL, 'best_model.h5')
-    #model.load_weights('best_model.h5')
-
+    
     test_generator = DataGenerator([i for i in range(len(data.inputWordArray))],
                                     x = data.inputWordArray,
                                     x_flair = data.input_flair,
@@ -104,7 +91,7 @@ def predict(config = config_dict):
 
     #Print predict causal triplets 
     decoded_predictions = {
-        'Sentences': [],
+        #'Sentences': [],
         'Predictions': []
     }   
 
@@ -112,11 +99,13 @@ def predict(config = config_dict):
     for i, p in enumerate(prediction):
         p_idx = final_result(p, [data.index2word[w] for w in data.inputWordArray[i] if w != 0])
 
-        decoded_predictions['Sentences'].append('Sentence-%.3d:' % flag + \
-                                     ' '.join([data.index2word[w] for w in data.inputWordArray[i] if w != 0]))
+        #decoded_predictions['Sentences'].append('Sentence-%.3d:' % flag + \
+        #                             ' '.join([data.index2word[w] for w in data.inputWordArray[i] if w != 0]))
         
+        # If there is at least one causal relationship in the input sentence  
         if p_idx != 0:
 
+            # Cause
             y_pred_Cause = []
             for n in p_idx:
                 cause = []
@@ -133,6 +122,7 @@ def predict(config = config_dict):
                             cause.append(word)
                 y_pred_Cause.append(cause)
 
+            # Effect
             y_pred_Effect = []
             for n in p_idx:
                 effect = []
@@ -149,11 +139,12 @@ def predict(config = config_dict):
                             effect.append(word)
                 y_pred_Effect.append(effect)
 
+            # Predictions of cause(s) and effect(s)
             decoded_predictions['Predictions'].append(
                                 [(y_pred_Cause[i], y_pred_Effect[i]) for i in range(len(y_pred_Cause))])
+        
+        # If there is no causal relationship in the input sentence
         else:
             decoded_predictions['Predictions'].append([])
-        
         flag += 1
-
     return decoded_predictions

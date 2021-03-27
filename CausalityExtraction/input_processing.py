@@ -22,16 +22,9 @@ FLAIR_DIM = 4096
 fp1 = str(Path(configurations.INDEX_DIR, 'index_w.pkl'))
 word2index, index2word = pickle.load(open(fp1, 'rb'))
 
-#fp1 = 'https://drive.google.com/uc?export=download&id=1RnQ8vutbAPpsPqpgsZ6ktGJCRI_5K_E5'
-#urllib.request.urlretrieve(fp1, 'index_w.pkl')
-#word2index, index2word = pickle.load(open('index_w.pkl', 'rb'))
-
 fp2 = str(Path(configurations.INDEX_DIR, 'index_c.pkl'))
 char2index, index2char = pickle.load(open(fp2, 'rb'))
 
-#fp2 = 'https://drive.google.com/uc?export=download&id=1AP7VYaucrSRy6jIkoBqCnOrBhUR4mNL3'
-#urllib.request.urlretrieve(fp2, 'index_c.pkl')
-#char2index, index2char = pickle.load(open('index_c.pkl', 'rb'))
 
 def sep_pm(ws, pm):
     """
