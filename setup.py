@@ -10,7 +10,7 @@ with open(Path(BASE_DIR, 'requirements.txt'), 'r') as file:
     required_packages = [ln.strip() for ln in file.readlines()]
 
 setup(
-    python_requires = '==3.7',
+    python_requires = '<=3.7',
     install_requires=[required_packages],
     entry_points = {
         'console_scripts': [

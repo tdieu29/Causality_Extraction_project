@@ -1,6 +1,4 @@
   
-fastapi
-uvicorn[standard]
 flair
 h5py==2.10
 wandb
