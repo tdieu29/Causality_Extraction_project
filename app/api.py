@@ -61,7 +61,6 @@ def _best_predict(request: Request, payload: PredictPayload):
         'message': HTTPStatus.OK.phrase,
         'status_code': HTTPStatus.OK,
         'data': {
-            'Sentences' : decoded_predictions['Sentences'],
             'Predictions': decoded_predictions['Predictions']
         }
     }

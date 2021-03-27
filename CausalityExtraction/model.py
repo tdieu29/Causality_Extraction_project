@@ -11,7 +11,6 @@ import math
 from keras.models import Model
 from keras import optimizers
 from keras.callbacks import *
-#import urllib.request
 
 from MHSA import MultiHeadSelfAttention
 from ChainCRF import ChainCRF
@@ -117,17 +116,10 @@ class Data:
     def __init__(self, config):
         fp1 = str(Path(index_path, 'index_w.pkl'))
         self.word2index, self.index2word = pickle.load(open(fp1, 'rb'))
-        
-        #fp1 = 'https://drive.google.com/uc?export=download&id=1RnQ8vutbAPpsPqpgsZ6ktGJCRI_5K_E5'
-        #urllib.request.urlretrieve(fp1, 'index_w.pkl')
-        #self.word2index, self.index2word = pickle.load(open('index_w.pkl', 'rb'))
-
+    
         fp2 = str(Path(embedding_path, 'extvec_embedding.npy'))
         self.embedding = np.load(open(fp2, 'rb'))
-        #fp2 = 'https://drive.google.com/uc?export=download&id=1OuBgaMrTrl1NZY0qvjEx4DkxDdO5SvLI'
-        #urllib.request.urlretrieve(fp2, 'extvec_embedding.npy')
-        #self.embedding = np.load(open('extvec_embedding.npy', 'rb'))
-    
+            
         self.VOCAB_SIZE = len(self.word2index)
 
         with h5py.File(str(Path(train_path, 'train.h5')), 'r') as fh:
@@ -142,7 +134,7 @@ class Data:
 
     def cross_validation(self):
         """
-        Return the data from cross validation
+        Return the data for cross validation
         """
         # Flair embedding
         h5f = h5py.File(str(Path(embedding_path, 'flair.h5')), 'r')
@@ -189,7 +181,7 @@ class Data:
 
     def train(self):
         """
-        Return the data of train
+        Return the data for training
         """
         # Flair embedding
         h5f = h5py.File(str(Path(embedding_path, 'flair.h5')), 'r')
