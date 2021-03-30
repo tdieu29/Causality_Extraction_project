@@ -91,16 +91,12 @@ def predict(config = config_dict):
 
     #Print predict causal triplets 
     decoded_predictions = {
-        #'Sentences': [],
         'Predictions': []
     }   
 
     flag = 1
     for i, p in enumerate(prediction):
         p_idx = final_result(p, [data.index2word[w] for w in data.inputWordArray[i] if w != 0])
-
-        #decoded_predictions['Sentences'].append('Sentence-%.3d:' % flag + \
-        #                             ' '.join([data.index2word[w] for w in data.inputWordArray[i] if w != 0]))
         
         # If there is at least one causal relationship in the input sentence  
         if p_idx != 0:
