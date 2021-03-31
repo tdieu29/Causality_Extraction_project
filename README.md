@@ -9,4 +9,4 @@ To set up a virtual environment, activate it and install the required packages f
 
 To run streamlit app: 
 
-streamlit run streamlit.py
+streamlit run CausalityExtraction/streamlit.py
