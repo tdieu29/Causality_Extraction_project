@@ -8,6 +8,8 @@ WORKDIR /app
 RUN pip install -U pip
 RUN pip install -r requirements.txt
 
+ENV PYTHONPATH="/app"
+
 # Expose port you want your app on
 EXPOSE 8501
 
