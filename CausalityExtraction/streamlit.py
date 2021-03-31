@@ -33,7 +33,9 @@ if st.button('Get results'):
         sentences.append(sentence)
     
     with st.spinner('Running...'):   
-        input_processing.get_input(sentences)
+        inputProcessor = input_processing
+        inputProcessor.get_input(sentences)
+        #input_processing.get_input(sentences)
         decoded_predictions = predict.predict()
     st.success('Done!')
 
