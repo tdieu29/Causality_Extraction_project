@@ -11,11 +11,11 @@ text = st.text_area(
 label='The box below contains 16 example sentences. Please replace them with your own sentences and enter up to 16 sentences. \
 If you did not enter as many as 16 sentences, please leave the remaining example sentences in the box.', 
 value=
-"01. Standing in the sun makes me sweat. \n02. Smoking tobacco is by far the leading cause of lung cancer. \n03. Consuming too mush \
+"01. Deadlines might cause stress. \n02. Smoking tobacco is by far the leading cause of lung cancer. \n03. Consuming too mush \
 sugar is a contributing factor to getting diabetes. \n04. In 2004, Elon Musk and Jeff Bezos met for a meal to discuss space. \n05. \
 This year's Nobel Laureates in Physiology or Medicine made the remarkable and unexpected discovery that inflammation in the stomach \
 as well as ulceration of the stomach or duodenum is the result of an infection of the stomach caused by the bacterium Helicobacter \
-pylori. \n06. The runtime disconnected due to inactivity. \n07. Deadlines might cause stress. \n08. Bezos' space company Blue Origins \
+pylori. \n06. The runtime disconnected due to inactivity. \n07. It's very hot standing in the sun. \n08. Bezos' space company Blue Origins \
 was officially incorporated in Sept 2000. \n09. The damages caused by mudslides, tremors, subsidence, superficial or underground water \
 were verified, as well as swelling clay soils. \n10. Arguments lead to their friendship fallout. \n11. Talent starts with self-belief.\
  \n12. Growth is the art of consistently starting when you are not ready. \n13. Strong winds lead to power outages. \n14. Due to strong \
@@ -35,22 +35,21 @@ if st.button('Get results'):
     with st.spinner('Running...'):   
         inputProcessor = input_processing
         inputProcessor.get_input(sentences)
-        #input_processing.get_input(sentences)
         decoded_predictions = predict.predict()
-    st.success('Done!')
 
-    result = {'Sentence': [],
-                'Cause - Effect pairs': [], }
+        result = {'Sentence': [],
+                'Cause - Effect pairs': [], }  
 
-    for i in range(16):
-        prediction = decoded_predictions['Predictions'][i]
-        if len(prediction) != 0:
-            for m in range(len(prediction)):
+        for i in range(16):
+            prediction = decoded_predictions['Predictions'][i]
+            if len(prediction) != 0:
+                for m in range(len(prediction)):
+                    result['Sentence'].append(i+1)
+                    result['Cause - Effect pairs'].append(prediction[m])
+            else:
                 result['Sentence'].append(i+1)
-                result['Cause - Effect pairs'].append(prediction[m])
-        else:
-            result['Sentence'].append(i+1)
-            result['Cause - Effect pairs'].append('None')
+                result['Cause - Effect pairs'].append('None')
+    st.success('Done!')
 
     
     df = pd.DataFrame(data=result)

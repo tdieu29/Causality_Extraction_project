@@ -89,7 +89,10 @@ def predict(config = config_dict):
     result = model.predict_generator(test_generator)
     prediction = np.argmax(result, axis=-1)[:len(data.inputWordArray)]
 
-    #Print predict causal triplets 
+    #Decode predictions  
+    fp1 = str(Path(predict_path, 'unk_words_dict.pkl'))
+    unk_words_dict = pickle.load(open(fp1, 'rb'))
+
     decoded_predictions = {
         'Predictions': []
     }   
